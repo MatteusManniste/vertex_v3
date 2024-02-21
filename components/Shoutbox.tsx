@@ -2,10 +2,10 @@
 
 import { FaPaperPlane } from "react-icons/fa6";
 import { useRef, useState } from "react";
-import { ShoutboxMessage } from "./ShoutboxMessage";
-import type { Message } from "@/types";
 
 import "@/styles/shoutbox.css";
+import type { Message } from "@/types";
+import { ShoutboxMessage } from "./ShoutboxMessage";
 
 export const Shoutbox = () => {
   const shoutboxInputRef = useRef<HTMLInputElement>(null);
