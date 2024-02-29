@@ -12,8 +12,8 @@ model user {
 }
 
 model shoutbox {
-  id        Int       @id @default(autoincrement())
-  message   String?   @db.VarChar(512)
-  author    String?   @db.VarChar(32)
-  timestamp DateTime? @db.Date
+  id        String   @id @db.VarChar(64)
+  message   String   @db.VarChar(256)
+  author    String   @db.VarChar(32)
+  timestamp DateTime @default(now()) @db.Timestamp(0)
 }
