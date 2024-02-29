@@ -3,6 +3,7 @@ import { Banner } from "@/components/Banner";
 import { Shoutbox } from "@/components/Shoutbox";
 import { RecentThreads } from "@/components/RecentThreads";
 import { Topics } from "@/components/Topics";
+import { MembersOnline } from "@/components/MembersOnline";
 
 const Home = () => {
   return (
@@ -13,7 +14,10 @@ const Home = () => {
           <Shoutbox />
           <Topics />
         </div>
-        <RecentThreads />
+        <div className="container2">
+          <RecentThreads />
+          <MembersOnline />
+        </div>
       </div>
     </main>
   );
