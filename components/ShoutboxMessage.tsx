@@ -7,6 +7,8 @@ import type { ShoutboxMessageProps } from "@/types";
 export const ShoutboxMessage = ({
   author,
   message,
+  timestamp,
+  formattedTimestamp,
   onTagActionClick,
 }: ShoutboxMessageProps) => {
   return (
@@ -21,7 +23,12 @@ export const ShoutboxMessage = ({
         {author}
       </Link>
       {message}
-      <span className="shoutbox-message-timestamp">a moment ago</span>
+      <span
+        className="shoutbox-message-timestamp"
+        title={new Date(timestamp).toLocaleString()}
+      >
+        {formattedTimestamp}
+      </span>
     </li>
   );
 };
