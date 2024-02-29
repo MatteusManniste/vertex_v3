@@ -15,7 +15,7 @@ export const RecentThreads = () => {
               alt=""
               width={32}
               height={32}
-              style={{ borderRadius: "100%", marginTop: "0.25rem" }}
+              style={{ borderRadius: "50%", marginTop: "0.25rem" }}
             />
           </Link>
           <div className="recent-thread-wrapper">
@@ -35,7 +35,7 @@ export const RecentThreads = () => {
               alt=""
               width={32}
               height={32}
-              style={{ borderRadius: "100%", marginTop: "0.25rem" }}
+              style={{ borderRadius: "50%", marginTop: "0.25rem" }}
             />
           </Link>
           <div className="recent-thread-wrapper">
@@ -55,7 +55,7 @@ export const RecentThreads = () => {
               alt=""
               width={32}
               height={32}
-              style={{ borderRadius: "100%", marginTop: "0.25rem" }}
+              style={{ borderRadius: "50%", marginTop: "0.25rem" }}
             />
           </Link>
           <div className="recent-thread-wrapper">
@@ -75,7 +75,7 @@ export const RecentThreads = () => {
               alt=""
               width={32}
               height={32}
-              style={{ borderRadius: "100%", marginTop: "0.25rem" }}
+              style={{ borderRadius: "50%", marginTop: "0.25rem" }}
             />
           </Link>
           <div className="recent-thread-wrapper">
@@ -95,7 +95,7 @@ export const RecentThreads = () => {
               alt=""
               width={32}
               height={32}
-              style={{ borderRadius: "100%", marginTop: "0.25rem" }}
+              style={{ borderRadius: "50%", marginTop: "0.25rem" }}
             />
           </Link>
           <div className="recent-thread-wrapper">
