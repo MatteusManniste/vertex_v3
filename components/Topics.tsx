@@ -7,7 +7,7 @@ import "@/styles/topics.css";
 export const Topics = () => {
   return (
     <section className="topics">
-      <h1 className="topics-title">Important</h1>
+      <h1 className="topics-title">Topics</h1>
       <div className="topics-wrapper">
         <div className="topic">
           <FaBullhorn className="topic-icon" />
@@ -34,7 +34,7 @@ export const Topics = () => {
                 alt=""
                 width={32}
                 height={32}
-                style={{ borderRadius: "100%" }}
+                style={{ borderRadius: "50%" }}
               />
               <div className="latest-thread-content">
                 <Link className="latest-thread-title" href="/">
@@ -75,7 +75,7 @@ export const Topics = () => {
                 alt=""
                 width={32}
                 height={32}
-                style={{ borderRadius: "100%" }}
+                style={{ borderRadius: "50%" }}
               />
               <div className="latest-thread-content">
                 <Link className="latest-thread-title" href="/">
@@ -116,7 +116,7 @@ export const Topics = () => {
                 alt=""
                 width={32}
                 height={32}
-                style={{ borderRadius: "100%" }}
+                style={{ borderRadius: "50%" }}
               />
               <div className="latest-thread-content">
                 <Link className="latest-thread-title" href="/">
