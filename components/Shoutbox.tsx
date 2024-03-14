@@ -1,135 +1,112 @@
 "use client";
 
+import { useRef, useState, useLayoutEffect } from "react";
+import Link from "next/link";
 import { FaPaperPlane } from "react-icons/fa6";
-import { useRef, useState, useOptimistic, useEffect } from "react";
 
 import "@/styles/shoutbox.css";
 import type { Message } from "@/types";
-import { ShoutboxMessage } from "./ShoutboxMessage";
-import { handleTimestamps } from "@/helpers/handleTimestamps";
-import { getSortedShoutboxMessages } from "@/library/data";
+import { formatTimestamp } from "@/helpers/formatTimestamp";
 
-export const Shoutbox = () => {
-  // const shoutboxInputRef = useRef<HTMLInputElement>(null);
-  // const [shoutboxMessages, setShoutboxMessages] = useState<Message[]>([]);
+export const Shoutbox = ({ disabled }: { disabled?: boolean }) => {
+  const shoutboxInputRef = useRef<HTMLInputElement>(null);
+  const [shoutboxMessages, setShoutboxMessages] = useState<Message[]>([]);
 
-  // const getShoutboxMessage = async (): Promise<Message[]> => {
-  //   const response = await fetch("/api/shoutbox/messages");
-  //   const shoutboxMessageResponse = await response.json();
+  const fetchShoutboxMessages = async () => {
+    let shoutboxMessages: Message[] = [];
+    const response = await fetch("/api/shoutbox/messages");
 
-  //   const messages: Message[] = shoutboxMessageResponse.map((message: any) => ({
-  //     ...message,
-  //     timestamp: new Date(message.timestamp),
-  //   }));
+    if (response.ok) {
+      shoutboxMessages = await response.json();
 
-  //   return messages;
-  // };
+      // converting the timestamp back to a Date object after receiving it as string from the response
+      shoutboxMessages.forEach((message) => {
+        message.timestamp = new Date(message.timestamp);
+      });
+    }
 
-  // useEffect(() => {
-  //   setInterval(async () => {
-  //     setShoutboxMessages(await getShoutboxMessage());
-  //   }, 3000);
-  // }, []);
+    return shoutboxMessages;
+  };
 
-  // FIXME: bugged rn
-  // const [optimisticMessages, addOptimisticMessage] = useOptimistic<Message[]>(
-  //   messages,
-  //   (state: Message[], newMessage: Message) => [
-  //     ...state,
-  //     { ...newMessage, pending: true },
-  //   ]
-  // );
+  useLayoutEffect(() => {
+    (async function () {
+      // initializing the shoutbox messages as soon as the component mounts
+      setShoutboxMessages(await fetchShoutboxMessages());
+    })();
 
-  // const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
+    // polling for new shoutbox messages every 5 seconds
+    const interval = setInterval(async () => {
+      setShoutboxMessages(await fetchShoutboxMessages());
+    }, 5000);
 
-  //   const response = await fetch("/api/shoutbox/messages", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       message: shoutboxInputRef.current?.value,
-  //     }),
-  //   });
+    return () => clearInterval(interval);
+  }, []);
 
-  //   if (!response.ok) {
-  //     // TODO: finish this and handle send button disabling as well
-  //     shoutboxInputRef.current?.classList?.add("shoutbox-message-error");
-  //   } else {
-  //     if (shoutboxInputRef.current) {
-  //       shoutboxInputRef.current.value = "";
-  //     }
-  //   }
+  const handleSendingMessage = async (e: React.FormEvent) => {
+    // TODO: get author from auth context
 
-  //   // if (shoutboxInputRef.current) {
-  //   //   const newMessage: Message = {
-  //   //     author: "test",
-  //   //     message: shoutboxInputRef.current.value.trim(),
-  //   //     timestamp: new Date(Date.now()),
-  //   //   };
+    e.preventDefault();
 
-  //   //   setShoutboxMessages([...shoutboxMessages, newMessage]);
-  //   //   addOptimisticMessage(newMessage);
-  //   //   shoutboxInputRef.current.value = "";
-  //   // }
-  // };
+    if (shoutboxInputRef.current) {
+      const response = await fetch("/api/shoutbox/messages", {
+        method: "post",
+        body: JSON.stringify({
+          author: "admin123",
+          message: shoutboxInputRef.current.value,
+        }),
+      });
 
-  // useEffect(() => {
-  //   console.log(optimisticMessages);
-  // }, [optimisticMessages]);
+      if (response.ok) {
+        // update the shoutbox after user sent a message
+        setShoutboxMessages(await fetchShoutboxMessages());
+        shoutboxInputRef.current.value = "";
+        return;
+      }
 
-  // const handleTagging = (author: string) => {
-  //   if (shoutboxInputRef.current) {
-  //     shoutboxInputRef.current.value =
-  //       `@${author} ` + shoutboxInputRef.current.value;
-  //     shoutboxInputRef.current.focus();
-  //   }
-  // };
+      shoutboxInputRef.current?.classList.add("shoutbox-message-error");
+    }
+  };
+
+  const handleTagging = (author: string) => {
+    if (shoutboxInputRef.current) {
+      const inputValue = shoutboxInputRef.current.value;
+      shoutboxInputRef.current.value = `@${author} ${inputValue}`;
+      shoutboxInputRef.current.focus();
+    }
+  };
 
   return (
     <section className="shoutbox">
       <h1 className="shoutbox-title">Shoutbox</h1>
       <ul className="shoutbox-messages">
-        <li className="shoutbox-message">
-          <span className="shoutbox-tag-action">@</span>
-          <span className="shoutbox-message-author">user652</span>
-          thanks. its nice to be here!
-          <span className="shoutbox-message-timestamp">a moment ago</span>
-        </li>
-        <li className="shoutbox-message">
-          <span className="shoutbox-tag-action">@</span>
-          <span className="shoutbox-message-author">admin</span>
-          welcome everyone!
-          <span className="shoutbox-message-timestamp">2 minutes ago</span>
-        </li>
-        {/* {shoutboxMessages.map(({ id, author, message, timestamp }) => {
-          const formattedTimestamp = handleTimestamps(timestamp);
+        {shoutboxMessages.map(({ id, author, message, timestamp }) => {
           return (
-            <ShoutboxMessage
-              key={id}
-              id={id}
-              author={author}
-              message={message}
-              timestamp={timestamp}
-              formattedTimestamp={formattedTimestamp}
-              onTagActionClick={handleTagging}
-            />
+            <li className="shoutbox-message" key={id}>
+              <span onClick={() => handleTagging(author)} className="shoutbox-tag-action">
+                @
+              </span>
+              <Link className="shoutbox-message-author" href="/">
+                {author}
+              </Link>
+              {message}
+              <span className="shoutbox-message-timestamp" title={timestamp.toLocaleString()}>
+                {formatTimestamp(timestamp)}
+              </span>
+            </li>
           );
-        })} */}
+        })}
       </ul>
-      <form className="shoutbox-form">
+      <form className="shoutbox-form" action="" method="post" onSubmit={(e) => handleSendingMessage(e)}>
         <input
+          onInput={() => shoutboxInputRef.current?.classList.remove("shoutbox-message-error")}
           className="shoutbox-input"
           type="text"
-          placeholder="Write a message..."
+          placeholder={disabled ? "Shoutbox is disabled." : "Write a message..."}
           autoComplete="off"
-          name="shoutboxInput"
-          // ref={shoutboxInputRef}
-          // onInput={() =>
-          //   shoutboxInputRef.current?.classList?.remove(
-          //     "shoutbox-message-error"
-          //   )
-          // }
+          ref={shoutboxInputRef}
+          disabled={disabled}
         />
-        <button className="shoutbox-button" type="submit" title="Send message">
+        <button className="shoutbox-button" type="submit" title={disabled ? "Shoutbox is disabled." : "Send message"} disabled={disabled}>
           <FaPaperPlane />
         </button>
       </form>
