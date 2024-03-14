@@ -17,3 +17,8 @@ model shoutbox {
   author    String   @db.VarChar(32)
   timestamp DateTime @default(now()) @db.Timestamp(0)
 }
+
+model services {
+  service String  @id @db.VarChar(64)
+  status  Boolean
+}
