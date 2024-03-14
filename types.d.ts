@@ -1,7 +1,10 @@
-export interface Message {
-  id: string;
+export interface MessageBody {
   author: string;
   message: string;
+}
+
+export interface Message extends MessageBody {
+  id: string;
   timestamp: Date;
 }
 
